@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+	prefHeight="250" prefWidth="350" fx:controller="basic.container.eventhandle.RootController"
+> <!-- 다 치면 오타날수있으니까 RootController 치고 자동완성 -->
+	<center>
+		<Label text="JavaFX" fx:id="label"> <!-- 아이디 지정해서 불러오기 편하게함 -->
+		<!--  라벨은 폰트크기 지정가능 -->
+			<font>
+				<Font size="10" /> <!-- 폰트클래스 -->
+			</font>
+		</Label>
+	</center>
+	<bottom>
+		<Slider fx:id="slider" /> <!-- 값이 계속바뀌는.. 늘렸다 줄였다 하는거 -->
+	</bottom>
+</BorderPane>
+
