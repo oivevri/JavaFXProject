@@ -25,8 +25,8 @@
 				<VBox prefHeight="100.0" prefWidth="100.0" spacing="20.0"
 				alignment="CENTER_LEFT">
 					<children>
-						<CheckBox fx:id="chk1" text="안경" onAction="#handleChkAction"/>
-						<CheckBox fx:id="chk2" text="모자" onAction="#handleChkAction"/>
+						<CheckBox fx:id="chk1" text="안경"/>
+						<CheckBox fx:id="chk2" text="모자"/>
 					</children>
 				</VBox>
 				
@@ -34,18 +34,26 @@
 					<image><Image url="/basic/images/geek.gif"/></image>
 				</ImageView>
 				
+				
 				<Separator orientation="VERTICAL" prefHeight="100.0"/>
+				
 				
 				<VBox prefHeight="100" prefWidth="150" spacing="20.0"
 					alignment="CENTER_LEFT">
 				<fx:define><ToggleGroup fx:id="group"/></fx:define>
+<!-- 컨트롤러를 통해 <ToggleGroup fx:id="group"/> 를 group이라는 이름으로 불러오겠다 -->
+<!-- 그룹을 2개로 나뉘면 토글되는 애들 선택하는거도 다르게할수있음
+ex. <fx:define><ToggleGroup fx:id="group2"/></fx:define> -->
 				<children>
 					<RadioButton fx:id="rad1" text="BubbleChart" userData="BubbleChart"
 						toggleGroup="$group"/>
 					<RadioButton fx:id="rad2" text="BarChart" userData="BarChart"
 						toggleGroup="$group" selected="true"/>
+<!-- selected 되어있는게 처음 시작할때 바 차트에서 하라는 초기화값 -->
 					<RadioButton fx:id="rad3" text="AreaChart" userData="AreaChart"
 						toggleGroup="$group"/>	
+<!-- <RadioButton fx:id="rad3" text="AreaChart" userData="AreaChart"
+toggleGroup="$group2"/>	이런식으로 -->
 				</children>
 				</VBox>
 				
@@ -56,8 +64,7 @@
 		</HBox>
 	</center>
 	<bottom>
-		<Button fx:id="btnExit" BorderPane.alignment="CENTER"
-			onAction="#handleBntExitAction">
+		<Button fx:id="btnExit" BorderPane.alignment="CENTER">
 			<graphic>
 				<ImageView><Image url="/basic/images/exit.png"/></ImageView>
 			</graphic>
