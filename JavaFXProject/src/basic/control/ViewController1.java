@@ -3,10 +3,12 @@ package basic.control;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
@@ -70,5 +72,16 @@ public class ViewController1 implements Initializable {
 		});
 			
 	}
-
+	public void handleBtnOnAction(ActionEvent e) {
+		String item = listView.getSelectionModel().getSelectedItem();
+		System.out.println("ListView 스마트폰: " + item);
+		
+		Phone phone = tableView.getSelectionModel().getSelectedItem();
+		System.out.println("TableView 스마트폰: " + phone.getSmartPhone());
+		System.out.println("TableView 이미지: " + phone.getImage());
+	}
+	
+	public void handleBtnCancelAction(ActionEvent e) {
+		Platform.exit();
+	}
 }
