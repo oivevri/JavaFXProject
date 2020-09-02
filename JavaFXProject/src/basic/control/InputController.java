@@ -1,6 +1,10 @@
 package basic.control;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -62,8 +66,48 @@ public class InputController implements Initializable {
 			showPopup("공개여부를 지정하세요!");
 		} else if (dateExit.getValue() == null) {
 			showCustomDialog("날짜를 입력하세요");
+		} else { //입력코드
+			insertData();
 		}
 	}
+	// 데이터베이스 연결
+	public void insertData() {
+		String url = "jdbc:oracle:thin:@localhost:1521:xe";
+		String user = "hr", passwd = "hr";
+		Connection conn = null; //java.sql의 connection
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection(url, user, passwd);
+		} catch(ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		
+		// 5가지 파라미터 기입한걸 테이블에 넣는 sql문을 작성
+		String sql = "insert into new_board values(?, ?, ?, ?, ?)";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, txtTitle.getText()); // 첫번째 파라미터 입력한 값을 넣겠다
+			pstmt.setString(2, txtPassword.getText());
+			pstmt.setString(3, comboPublic.getValue());
+			pstmt.setString(4, dateExit.getValue().toString());
+			pstmt.setString(5, txtContent.getText());
+			
+			int r = pstmt.executeUpdate();
+			System.out.println(r + "건 입력됨.");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 	
 // 반복되는 부분을 이용하기 위해 팝업을 메소드로 따로 빼자
 	public void showPopup(String msg) {
