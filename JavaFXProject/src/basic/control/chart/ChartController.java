@@ -104,10 +104,12 @@ public class ChartController implements Initializable {
 	public ObservableList<XYChart.Data<String, Integer>> getSeries4() {
 		ObservableList<XYChart.Data<String, Integer>> list =
 				FXCollections.observableArrayList();
-		list.add(new XYChart.Data<String, Integer>("09",5));
-		list.add(new XYChart.Data<String, Integer>("10",12));
-		list.add(new XYChart.Data<String, Integer>("11",15));
-		list.add(new XYChart.Data<String, Integer>("12",25));
+		list.add(new XYChart.Data<String, Integer>("2020-05",5));
+		list.add(new XYChart.Data<String, Integer>("2020-06",12));
+		list.add(new XYChart.Data<String, Integer>("2020-07",15));
+		list.add(new XYChart.Data<String, Integer>("2020-08",25));
+		list.add(new XYChart.Data<String, Integer>("2020-09",17));
+		list.add(new XYChart.Data<String, Integer>("2020-10",9));
 		return list;
 	}
 }
