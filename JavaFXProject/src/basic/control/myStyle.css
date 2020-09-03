@@ -1,0 +1,23 @@
+Label {
+	-fx-text-fill: blue;
+	-fx-border-color: red;
+	-fx-border-radius: 5;
+}
+
+Button {
+	-fx-background-color: rgba(0, 0, 255);
+	-fx-border-radius: 3;
+	-fx-text-fill: white;
+}
+
+#addStyle {
+	-fx-background-color: rgba(0, 255, 255);
+	-fx-border-radius: 5;
+	-fx-text-fill: gray;
+}
+
+.lblClass {
+	-fx-text-fill: rgba(0, 100, 100);
+	-fx-border-radius: 2;
+	-fx-border-color: green;
+}

@@ -6,7 +6,8 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane prefHeight="350.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" 
-    fx:controller="basic.control.BoardController">
+    fx:controller="basic.control.BoardController" stylesheets="@myStyle.css"
+    style="-fx-background-color: yellow; ">
    <children>
       <TableView fx:id="boardView" layoutX="25.0" layoutY="55.0" prefHeight="241.0" prefWidth="175.0">
         <!-- <columns>
@@ -15,8 +16,8 @@
         </columns> -->
       </TableView>
       <Label layoutX="25.0" layoutY="30.0" text="리스트" />
-      <Label layoutX="238.0" layoutY="30.0" text="-------------- 상세내용 ------------" />
-      <Label layoutX="235.0" layoutY="55.0" text="제목" />
+      <Label styleClass="lblClass" layoutX="238.0" layoutY="30.0" text="-------------- 상세내용 ------------" />
+      <Label styleClass="lblClass" layoutX="235.0" layoutY="55.0" text="제목" />
       <Label layoutX="235.0" layoutY="88.0" text="공개여부" />
       <Label layoutX="353.0" layoutY="88.0" text="종료일자" />
       <Label layoutX="235.0" layoutY="139.0" text="내용" />
@@ -26,6 +27,7 @@
       <TextArea fx:id="txtContent" layoutX="235.0" layoutY="163.0" prefHeight="131.0" prefWidth="247.0" />
       <Button fx:id="btnPrev" layoutX="173.0" layoutY="307.0" mnemonicParsing="false" text="Prev" />
       <Button fx:id="btnNext" layoutX="254.0" layoutY="307.0" mnemonicParsing="false" text="Next" />
+       <Button id="addStyle" layoutX="334.0" layoutY="307.0" text="추가" />
       <Separator layoutX="215.0" layoutY="35.0" orientation="VERTICAL" prefHeight="265.0" />
    </children>
 </AnchorPane>
