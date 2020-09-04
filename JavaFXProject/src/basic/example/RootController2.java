@@ -2,8 +2,14 @@ package basic.example;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import basic.common.ConnectionDB;
+import basic.control.Board;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,21 +34,25 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class RootController implements Initializable {
-	@FXML TableView<Student> tableView;
+public class RootController2 implements Initializable {
+	@FXML TableView<Student2> tableView;
 	@FXML Button btnAdd, btnBarChart;
 	
-	ObservableList<Student> list; // 전체에서 쓸수있도록 필드영역으로 빼줌?
+	ObservableList<Student2> list; // 이거는 정보를 list에 담는거
+	String sql = "";
+	Connection conn = ConnectionDB.getDB(); // DB연결
+	PreparedStatement pstmt;
 	
 	Stage priStage; // 이건 AppMain이랑 상관없이 새로 설정하는거임
 	public void setPriStage(Stage priStage) {
 		this.priStage = priStage; //rootController 전체에서 접근가능한 필드
 	}
 	
-	@Override
+	@Override // 얘가 실행되는 애.. main이랑 비슷한역할
 	public void initialize(URL location, ResourceBundle resources) {
+		
 // 성적		
-		TableColumn<Student, ?> tc = tableView.getColumns().get(0); // 첫번째 칼럼을 가져오자
+		TableColumn<Student2, ?> tc = tableView.getColumns().get(0); // 첫번째 칼럼을 가져오자
 		tc.setCellValueFactory(new PropertyValueFactory<>("name"));
 	
 		tc = tableView.getColumns().get(1);
@@ -80,7 +90,7 @@ public class RootController implements Initializable {
 
 			@Override
 			public void handle(MouseEvent event) {
-				System.out.println(event);
+			
 				if (event.getClickCount() == 2) { // 클릭을 2번하는 이벤트가 발생하면(즉, 더블클릭하면)
 					String selectedName = tableView.getSelectionModel().getSelectedItem().getName();
 					// 더블클릭한선택한 요소의 이름을 컬렉션(테이블뷰?)에서 찾아서 한건 가져오기
@@ -88,8 +98,8 @@ public class RootController implements Initializable {
 				}
 			}
 		});
-		
-		
+// db의 데이터 조회하기		
+		tableView.setItems(getStudent2()); // 밑에서 쓴 조회 메소드 여기서 호출
 	} // end of initialize()
 	
 // 마우스 더블클릭 액션을 통해 정보 수정 (데이터업데이트)
@@ -151,13 +161,14 @@ public class RootController implements Initializable {
 			public void handle(ActionEvent event) {
 				for (int i=0; i<list.size(); i++) {
 					if(list.get(i).getName().equals(name)) { // name 기준으로 이름이 같다면
-						Student student = new Student(name,
+						Student2 student = new Student2(name,
 								Integer.parseInt(tKorean.getText()),
 								Integer.parseInt(tMath.getText()),
 								Integer.parseInt(tEnglish.getText())
 						// 두번째 생성자??여튼 점수들 매개값이 int라서 점수가져올때 앞에 Integer.parseInt쓴거
 						);
 						list.set(i, student);
+//						updateStudent2(student); // 기준에 해당하는 값을 student에 넣고, 여기 넣어줌
 					}
 				}
 				stage.close();
@@ -165,8 +176,11 @@ public class RootController implements Initializable {
 		});
 		
 		// 이름 기준으로 국수영 점수 화면에 입력
-		for(Student stu : list) {
+		for(Student2 stu : list) {
+			System.out.println(stu.getName());
+			System.out.println(name);
 			if(stu.getName().equals(name)) { //학생 클래스에있는 이름이랑 여기서의 매개값 이름이랑 같다면
+				System.out.println("sdg");
 				tKorean.setText(String.valueOf(stu.getKorean()));
 				tMath.setText(String.valueOf(stu.getMath()));
 				tEnglish.setText(String.valueOf(stu.getEnglish()));
@@ -182,6 +196,7 @@ public class RootController implements Initializable {
 		// Platform.exit()) 는 플랫폼을 나간다는것. 즉 전체 끄기
 		
 		
+		
 	// 위에서 만든 컨트롤들을 다 ap 컨테이너에 붙여준다
 		ap.getChildren().addAll(btnUpdate, btnCancel, lKorean, lMath, lEnglish, tName, tKorean, tMath, tEnglish);
 		Scene sc = new Scene(ap); // 씬에 컨테이너 붙여주고
@@ -190,7 +205,7 @@ public class RootController implements Initializable {
 	}
 	
 	
-// 차튼버튼 누르는거 따로 메소드 빼서 적은거
+// 차트의 버튼 누르는거 따로 메소드 빼서 적은거
 	public void handleBtnChartAction() {
 		Stage stage = new Stage(StageStyle.UTILITY); //윈도우 모양스타일임
 		stage.initModality(Modality.WINDOW_MODAL);
@@ -285,14 +300,19 @@ public class RootController implements Initializable {
 					TextField txtMath = (TextField) parent.lookup("#txtMath");
 					TextField txtEnglish = (TextField) parent.lookup("#txtEnglish");
 					
-					Student student = new Student(txtName.getText(),
+					Student2 student = new Student2(txtName.getText(),
 							Integer.parseInt(txtKorean.getText()),
 							Integer.parseInt(txtMath.getText()),
 							Integer.parseInt(txtEnglish.getText())
 					); 
-					list.add(student); // 리스트에 이 student 만든거 넣어주기
-					
-					stage.close(); // 추가(add) 화면닫아주기
+// 밑에써준 입력 메소드를 여기서 호출해줌 (여기서 메소드 자체생성하는건 안됨)
+				insertStudent2(student);
+				
+// 이까지만 하면 db에 추가는 되는데, 창에는 안뜸
+// 윈도우창을 리프레시 해줘야함 : 그냥 테이블뷰를 다시불러와주면 됨
+				tableView.setItems(getStudent2());
+
+				stage.close(); // 추가(add) 화면닫아주기
 				}
 			});
 			
@@ -315,4 +335,63 @@ public class RootController implements Initializable {
 			e.printStackTrace();
 		}
 	}	
+//sql문 : 조회 (select)
+	public ObservableList<Student2> getStudent2() {
+		sql = "select * from student order by 1";
+		ObservableList<Student2> list = FXCollections.observableArrayList();
+			
+		try { 
+			pstmt = conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			// 정보를 가져왔으니 틀에 담아야한다
+			while(rs.next()) {
+				Student2 student = new Student2(rs.getInt("id"),
+						rs.getString("name"),
+						rs.getInt("koScore"),
+						rs.getInt("mathScore"),
+						rs.getInt("engScore")
+				);
+				list.add(student);
+			}
+				
+		} catch (SQLException e){
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+// 입력 sql : insert	-> 이걸 save 버튼누르면 추가되도록 하자 (메소드는 저 밑에서 호출)
+	public void insertStudent2(Student2 student) {
+		sql = "insert into student values(student_seq.NEXTVAL, ?, ?, ?, ?)" ;
+		 
+		try { 
+			pstmt = conn.prepareStatement(sql);
+// 여기 번호 1,2,3,4 쓴게 물음표? 숫자의 순서임
+			pstmt.setString(1, student.getName());
+			pstmt.setInt(2, student.getKorean());
+			pstmt.setInt(3, student.getMath());
+			pstmt.setInt(4, student.getEnglish());
+			pstmt.executeUpdate(); //테이블이 변하게 되면 executeUpdate()사용
+					
+		} catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
+	
+// 수정 sql : update	
+	public void updateStudent2(Student2 student) {
+		String sql = "update student set koScore = ?, mathScore = ?, engScore = ? where id = ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, student.getKorean());
+			pstmt.setInt(2, student.getMath());
+			pstmt.setInt(3, student.getEnglish());
+			pstmt.setInt(4, student.getId());
+			pstmt.executeUpdate(); //테이블이 변하게 되면 executeUpdate()사용
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}	
+		
 }
