@@ -36,7 +36,7 @@ import javafx.stage.StageStyle;
 
 public class RootController2 implements Initializable {
 	@FXML TableView<Student2> tableView;
-	@FXML Button btnAdd, btnBarChart;
+	@FXML Button btnAdd, btnBarChart, btnDelete;
 	
 	ObservableList<Student2> list; // 이거는 정보를 list에 담는거
 	String sql = "";
@@ -393,5 +393,21 @@ public class RootController2 implements Initializable {
 			e.printStackTrace();
 		}
 	}	
-		
+
+// 선택 행을 삭제버튼으로 삭제 -> 아직 테이블에 적용은 안됨
+	@FXML
+	public void deleteStudent2() {
+	    int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
+	    tableView.getItems().remove(selectedIndex);
+	
+// 이건 입력값을 삭제하는거잖아 ..ㅠㅠ
+//	    String sql =  "delete from student where id = ?";
+//	    try {
+//	    	pstmt = conn.prepareStatement(sql);
+//	    	pstmt.setInt(1, student.getId());
+//	    	pstmt.executeUpdate();
+//	    } catch (SQLException e) {
+//	    	e.printStackTrace();
+//	    }
+	}
 }
