@@ -25,7 +25,7 @@
 			<children>
 				<Button fx:id="btnAdd" text="추가" />
 				<Button fx:id="btnBarChart" text="차트" />
-          		<Button fx:id="btnDelete" onAction="#deleteStudent2" text="삭제" />
+          		<Button fx:id="btnDelete" text="삭제" />
 			</children>
 		</HBox>
 	</bottom>
