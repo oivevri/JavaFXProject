@@ -1,5 +1,5 @@
 package basic.example;
-//UI : Root2.fxml(기본), AddForm.fxml(추가), BarChart.fxml(차트)
+//UI : Root3.fxml(기본), AddForm.fxml(추가), BarChart.fxml(차트)
 //Control : RootController.java
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +11,7 @@ public class AppMain2 extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// fxml의 정적메소드를 가져올수없어서 new 로 만듦??
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("Root2.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Root3.fxml"));
 		BorderPane root = loader.load();
 	
 		RootController2 controller = loader.getController();
@@ -23,6 +23,7 @@ public class AppMain2 extends Application{
 		Scene sc = new Scene(root);
 		primaryStage.setScene(sc);
 		primaryStage.show();
+		primaryStage.setTitle("학생 성적표");
 		primaryStage.setResizable(false); // 윈도우 크기를 변경할수있게true 없게false
 		
 		

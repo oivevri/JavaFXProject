@@ -79,7 +79,8 @@ public class RootController2 implements Initializable {
          public void handle(ActionEvent event) {
             int selectedId = tableView.getSelectionModel().getSelectedItem().getId();
             // 더블클릭한선택한 요소의 이름을 컬렉션(테이블뷰?)에서 찾아서 한건 가져오기
-            deleteStudent2(selectedId); //             
+            deleteStudent2(selectedId); //
+            tableView.setItems(getStudent2()); // 새로고침 refresh 리프레시
          }
          
       });
@@ -117,7 +118,7 @@ public class RootController2 implements Initializable {
       Stage stage = new Stage(StageStyle.UTILITY);
       stage.initModality(Modality.WINDOW_MODAL);
       stage.initOwner(priStage);
-      
+      stage.setTitle("학생 정보 수정");
    // 여기부터 레이아웃
       AnchorPane ap = new AnchorPane(); 
       ap.setPrefSize(210, 230);
@@ -198,7 +199,7 @@ public class RootController2 implements Initializable {
          }
       }
       
-   // 수정을 취소하고 끄는 버튼
+   // 수정을 취소하고 끄는 버튼 (창닫기)
       Button btnCancel = new Button("취소");
       btnCancel.setLayoutX(110);
       btnCancel.setLayoutY(184);
@@ -216,81 +217,89 @@ public class RootController2 implements Initializable {
    }
    
    
-// 차트의 버튼 누르는거 따로 메소드 빼서 적은거
-   public void handleBtnChartAction() {
-      Stage stage = new Stage(StageStyle.UTILITY); //윈도우 모양스타일임
-      stage.initModality(Modality.WINDOW_MODAL);
-      stage.initOwner(priStage); // 이거하려고 저~위에 priStage 만들어준거
-      
-      try {
-         Parent chart = FXMLLoader.load(getClass().getResource("BarChart.fxml"));
-         Scene scene = new Scene(chart);
-         stage.setScene(scene);
-         stage.show(); // 이제 차트화면 보여주기까지 됨
-         
+// 차튼버튼 누르는거 따로 메소드 빼서 적은거
+	public void handleBtnChartAction() {
+		Stage stage = new Stage(StageStyle.UTILITY); //윈도우 모양스타일임
+		stage.initModality(Modality.WINDOW_MODAL);
+		stage.initOwner(priStage); // 이거하려고 저~위에 priStage 만들어준거
+		stage.setTitle("바 차트");
+		try {
+			Parent chart = FXMLLoader.load(getClass().getResource("BarChart.fxml"));
+			Scene scene = new Scene(chart);
+			stage.setScene(scene);
+			stage.show(); // 이제 차트화면 보여주기까지 됨
+			
 // 차트chart 가지고와서 시리즈 series 를 추가해야함. 값을 담아야함. 시리즈는 컬렉션으로 되어있음
-         BarChart barChart = (BarChart) chart.lookup("#barChart");
-      // 여기에 시리즈를 부여. 시리즈는 이름과 점수들
+			BarChart barChart = (BarChart) chart.lookup("#barChart");
+		// 여기에 시리즈를 부여. 시리즈는 이름과 점수들
 // 시리즈 만들자
-//         XYChart.Series<T, U> > ObservableList<XYCart.Data<T, U>>
-//         데이터의 모음들이 시리즈에 연결되고, 시리즈를 차트에 추가하겠다
+//			XYChart.Series<T, U> > ObservableList<XYCart.Data<T, U>>
+//			데이터의 모음들이 시리즈에 연결되고, 시리즈를 차트에 추가하겠다
 
-      // 국어 카테고리   
-         XYChart.Series<String, Integer> seK = new XYChart.Series<String, Integer>();
-         seK.setName("국어"); // 국어카테고리로 학생의 변수를 담자(국어점수 담자)
-         
-         ObservableList<XYChart.Data<String, Integer>> koList
-                              = FXCollections.observableArrayList();
-         
-         for(int i=0; i<list.size(); i++) { // 국어점수를 컬렉션에 담자. 루틴돌면서
-            koList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getKorean()));
-         }
-         
-         
-         seK.setData(koList); // 사용자가 지금 리스트컬렉션에 담고있다. 그걸 불러와야함. 리스트를 데이터에 갖다붙이고
-         barChart.getData().add(seK); // 바 차트에 국어점수 시리즈를 추가한다
-         
-      // 수학 카테고리   
-         XYChart.Series<String, Integer> seM = new XYChart.Series<String, Integer>();
-         seM.setName("수학");
-         ObservableList<XYChart.Data<String, Integer>> mathList
-         = FXCollections.observableArrayList();
+		// 국어 카테고리	
+			XYChart.Series<String, Integer> seK = new XYChart.Series<String, Integer>();
+			seK.setName("국어"); // 국어카테고리로 학생의 변수를 담자(국어점수 담자)
+			
+			ObservableList<XYChart.Data<String, Integer>> koList
+										= FXCollections.observableArrayList();
+			
+			for(int i=0; i<getStudent2().size(); i++) { // 국어점수를 컬렉션에 담자. 루틴돌면서
+				koList.add(new XYChart.Data<>(getStudent2().get(i).getName(), getStudent2().get(i).getKorean()));
+			}
+// 이때 왜 그냥 list가 아니라 ObservableList<Student2> getStudent2() 를 쓰냐면, db에서 값을 불러와야해서임??			
+			
+			seK.setData(koList); // 사용자가 지금 리스트컬렉션에 담고있다. 그걸 불러와야함. 리스트를 데이터에 갖다붙이고
+			barChart.getData().add(seK); // 바 차트에 국어점수 시리즈를 추가한다
+			
+		// 수학 카테고리	
+			XYChart.Series<String, Integer> seM = new XYChart.Series<String, Integer>();
+			seM.setName("수학");
+			ObservableList<XYChart.Data<String, Integer>> mathList
+			= FXCollections.observableArrayList();
 
-         for(int i=0; i<list.size(); i++) { // 국어점수를 컬렉션에 담자. 루틴돌면서
-            mathList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getMath()));
-         }
-
-
-         seM.setData(mathList); // 사용자가 지금 리스트컬렉션에 담고있다. 그걸 불러와야함. 리스트를 데이터에 갖다붙이고
-         barChart.getData().add(seM); // 바 차트에 국어점수 시리즈를 추가한다
-         
-      // 영어 카테고리   
-         XYChart.Series<String, Integer> seE = new XYChart.Series<String, Integer>();
-         seE.setName("영어");
-         
-         ObservableList<XYChart.Data<String, Integer>> engList
-         = FXCollections.observableArrayList();
-
-         for(int i=0; i<list.size(); i++) { 
-            engList.add(new XYChart.Data<>(list.get(i).getName(), list.get(i).getEnglish()));
-         }
+			for(int i=0; i<getStudent2().size(); i++) {
+				mathList.add(new XYChart.Data<>(getStudent2().get(i).getName(), getStudent2().get(i).getMath()));
+			}
 
 
-         seE.setData(engList);
-         barChart.getData().add(seE);
-         
-      
-      } catch(IOException e) {
-         e.printStackTrace();
-      }
-   }   
+			seM.setData(mathList); 
+			barChart.getData().add(seM);
+			
+		// 영어 카테고리	
+			XYChart.Series<String, Integer> seE = new XYChart.Series<String, Integer>();
+			seE.setName("영어");
+			
+			ObservableList<XYChart.Data<String, Integer>> engList
+			= FXCollections.observableArrayList();
+
+			for(int i=0; i<getStudent2().size(); i++) { 
+				engList.add(new XYChart.Data<>(getStudent2().get(i).getName(), getStudent2().get(i).getEnglish()));
+			}
+
+			seE.setData(engList);
+			barChart.getData().add(seE);
+	
+// 취소버튼 (창닫기)			
+			Button barClose = (Button) chart.lookup("#barClose");
+			barClose.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					stage.close();
+				}
+			});
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+
+		
+	}	
 // 추가화면 보여주는 작업 -> 따로빼서 적은거
    public void handleBtnAddAction() {
       Stage stage = new Stage(StageStyle.UTILITY); //윈도우 모양스타일임
       stage.initModality(Modality.WINDOW_MODAL);
       stage.initOwner(btnAdd.getScene().getWindow()); // 나중에 추가설명
       // btnAdd라는 컨트롤의 씬의 윈도우(= 메인윈도우)가 주인????몰라..
-      
+      stage.setTitle("학생 추가");
       try { // 모든것을 받게하려고 parent 클래스
          Parent parent = FXMLLoader.load(getClass().getResource("AddForm.fxml"));
    
@@ -327,7 +336,7 @@ public class RootController2 implements Initializable {
             }
          });
          
-   // 추가화면의 취소버튼 : 닫기cancel 버튼
+   // 추가화면의 지우기버튼 : 초기화 clear 인듯
          Button btnFormCancel = (Button) parent.lookup("#btnFormCancel");
          btnFormCancel.setOnAction(e -> { 
             TextField txtName = (TextField) parent.lookup("#txtName");
@@ -339,8 +348,12 @@ public class RootController2 implements Initializable {
             txtKorean.clear();
             txtMath.clear();
             txtEnglish.clear();
-            
+           
          });
+    // 추가화면의 창닫기 버튼
+		Button btnFormClose = (Button) parent.lookup("#btnFormClose");
+		btnFormClose.setOnAction(e -> stage.close());
+         
          
       } catch(IOException e) {
          e.printStackTrace();
@@ -407,7 +420,6 @@ public class RootController2 implements Initializable {
 
 // 선택 행을 삭제버튼으로 삭제 -> 아직 테이블에 적용은 안됨
    public void deleteStudent2(int stuId) {
-      
        String sql =  "delete from student where id = " + stuId;
        try {
           pstmt = conn.prepareStatement(sql);

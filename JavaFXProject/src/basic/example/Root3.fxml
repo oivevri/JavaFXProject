@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basic.example.RootController2">
+	<center>
+		<TableView fx:id="tableView" prefHeight="200" prefWidth="420">
+			<columns>
+				<TableColumn prefWidth="100" resizable="false" text="이름" />
+				<TableColumn prefWidth="100" resizable="false" text="국어" />
+				<TableColumn prefWidth="100" resizable="false" text="수학" />
+				<TableColumn prefWidth="100" resizable="false" text="영어" />
+			</columns>
+		</TableView>
+	</center>
+	<bottom>
+		<HBox alignment="CENTER" prefHeight="50" spacing="10.0" BorderPane.alignment="CENTER">
+			<children>
+            <Button fx:id="btnPrev" text="이전">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="btnNext" text="다음">
+               <HBox.margin>
+                  <Insets right="60.0" />
+               </HBox.margin>
+            </Button>
+				<Button fx:id="btnAdd" text="추가" />
+          		<Button fx:id="btnDelete" text="삭제" />
+				<Button fx:id="btnBarChart" text="차트">
+               <HBox.margin>
+                  <Insets left="60.0" />
+               </HBox.margin></Button>
+			</children>
+		</HBox>
+	</bottom>
+</BorderPane>
