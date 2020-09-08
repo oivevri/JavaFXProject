@@ -19,6 +19,7 @@ public class AppMain2 extends Application{
 		// basic.example 밑에있는 RootController 파일 -> 얘가갖고있는 필드?를 쓸수있음?
 		controller.setPriStage(primaryStage);
 		// RootController에서 만든 스테이지에 primaryStage를 집어넣는다???
+		// 기서 정보수정 더블클릭하면 뭐 새창띄워야하는거때문에 써주는거
 		
 		Scene sc = new Scene(root);
 		primaryStage.setScene(sc);

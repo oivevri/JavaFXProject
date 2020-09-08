@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="basic.database.movie.ReviewController">
+	<center>
+		<TableView fx:id="tableView" prefHeight="200" prefWidth="600">
+			<columns>
+				<TableColumn prefWidth="100" resizable="false" text="date" />
+				<TableColumn prefWidth="200.0" resizable="false" text="name" />
+				<TableColumn prefWidth="50.0" resizable="false" text="rank" />
+				<TableColumn prefWidth="250" resizable="false" text="comment" />
+			</columns>
+		</TableView>
+	</center>
+	<bottom>
+		<HBox alignment="CENTER" prefHeight="50" spacing="50.0" BorderPane.alignment="CENTER">
+			<children>
+				<Button fx:id="btnAdd" text="추가" />
+          		<Button fx:id="btnDelete" text="삭제" />
+			</children>
+		</HBox>
+	</bottom>
+</BorderPane>

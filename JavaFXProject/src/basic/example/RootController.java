@@ -144,7 +144,7 @@ public class RootController implements Initializable {
 		Button btnUpdate = new Button("수정");
 		btnUpdate.setLayoutX(55);
 		btnUpdate.setLayoutY(184);
-		// 수정버튼 클릭했을 때 액션
+		// 수정버튼 클릭했을 때 액션 (저장되는거)
 		btnUpdate.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -164,7 +164,7 @@ public class RootController implements Initializable {
 			}
 		});
 		
-		// 이름 기준으로 국수영 점수 화면에 입력
+		// 이름 기준으로 국수영 점수 화면에 뜸
 		for(Student stu : list) {
 			if(stu.getName().equals(name)) { //학생 클래스에있는 이름이랑 여기서의 매개값 이름이랑 같다면
 				tKorean.setText(String.valueOf(stu.getKorean()));

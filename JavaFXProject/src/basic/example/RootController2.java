@@ -105,6 +105,7 @@ public class RootController2 implements Initializable {
             if (event.getClickCount() == 2) { // 클릭을 2번하는 이벤트가 발생하면(즉, 더블클릭하면)
                String selectedName = tableView.getSelectionModel().getSelectedItem().getName();
                // 더블클릭한선택한 요소의 이름을 컬렉션(테이블뷰?)에서 찾아서 한건 가져오기
+            
                handleDoubleClikAction(selectedName); // 
             }
          }
@@ -119,12 +120,15 @@ public class RootController2 implements Initializable {
       stage.initModality(Modality.WINDOW_MODAL);
       stage.initOwner(priStage);
       stage.setTitle("학생 정보 수정");
+
    // 여기부터 레이아웃
       AnchorPane ap = new AnchorPane(); 
       ap.setPrefSize(210, 230);
       
       Label lKorean, lMath, lEnglish;
       TextField tName, tKorean, tMath, tEnglish;
+      int korean = tableView.getSelectionModel().getSelectedItem().getKorean();
+      
       
       // 앵커페인이니까 위치를 다 지정해줘야함
       lKorean = new Label("국어");
@@ -150,6 +154,7 @@ public class RootController2 implements Initializable {
       tKorean.setPrefWidth(110);
       tKorean.setLayoutX(72);
       tKorean.setLayoutY(69);
+      tKorean.setText(String.valueOf(korean));
       
       tMath = new TextField();
       tMath.setPrefWidth(110);
@@ -160,12 +165,21 @@ public class RootController2 implements Initializable {
       tEnglish.setPrefWidth(110);
       tEnglish.setLayoutX(72);
       tEnglish.setLayoutY(128);
+      // 이름 기준으로 국수영 점수 화면에 가져오는거... 근데난왜안되지
+      for(Student2 stu : list) {
+         if(stu.getName().equals(name)) { //학생 클래스에있는 이름이랑 여기서의 매개값 이름이랑 같다면
+            tKorean.setText(String.valueOf(stu.getKorean()));
+            tMath.setText(String.valueOf(stu.getMath()));
+            tEnglish.setText(String.valueOf(stu.getEnglish()));
+         }
+      }
+      
       
    // 수정값이 업데이트되는 버튼   
       Button btnUpdate = new Button("수정");
       btnUpdate.setLayoutX(55);
       btnUpdate.setLayoutY(184);
-      // 수정버튼 클릭했을 때 액션
+      // 수정버튼 클릭했을 때 액션(저장)
       btnUpdate.setOnAction(new EventHandler<ActionEvent>() {
 
          @Override
@@ -185,19 +199,6 @@ public class RootController2 implements Initializable {
             stage.close();
          }
       });
-
-      
-      // 이름 기준으로 국수영 점수 화면에 입력
-      for(Student2 stu : list) {
-         System.out.println(stu.getName());
-         System.out.println(name);
-         if(stu.getName().equals(name)) { //학생 클래스에있는 이름이랑 여기서의 매개값 이름이랑 같다면
-            System.out.println("sdg");
-            tKorean.setText(String.valueOf(stu.getKorean()));
-            tMath.setText(String.valueOf(stu.getMath()));
-            tEnglish.setText(String.valueOf(stu.getEnglish()));
-         }
-      }
       
    // 수정을 취소하고 끄는 버튼 (창닫기)
       Button btnCancel = new Button("취소");
@@ -362,7 +363,7 @@ public class RootController2 implements Initializable {
 //sql문 : 조회 (select)
    public ObservableList<Student2> getStudent2() {
       sql = "select * from student order by 1";
-      ObservableList<Student2> list = FXCollections.observableArrayList();
+      list = FXCollections.observableArrayList();
          
       try { 
          pstmt = conn.prepareStatement(sql);
