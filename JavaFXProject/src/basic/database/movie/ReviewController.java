@@ -91,19 +91,22 @@ public class ReviewController implements Initializable{
 			Scene sc = new Scene(parent);
 			stage.setScene(sc);
 			stage.show();
+		// 라벨이.. 맞니	
 			ImageView imageView = (ImageView) parent.lookup("#imageView");
-			Label iname = (Label) parent.lookup("#iname");
+			Label iName = (Label) parent.lookup("#iName");
 			Label iDate = (Label) parent.lookup("#iDate");
 			Label iRank = (Label) parent.lookup("#iRank");
 			Label iComment = (Label) parent.lookup("#iComment");
-			
+		// 읽어오는거..	
 			for(Review rv : list) {
 				if(rv.getName().equals(name)) {
-					
+					// 이미지 불러올때도 경로 불러와서 변환해서 해야함
+					iDate.setText(rv.getDate());
+					iName.setText(rv.getName());
+					iRank.setText(rv.getRank());
+					iComment.setText(rv.getComment());
 				}
-				
 			}
-			
 			
 			Button btnInfoClose = (Button) parent.lookup("#btnInfoClose");
 			btnInfoClose.setOnAction(e -> stage.close());
