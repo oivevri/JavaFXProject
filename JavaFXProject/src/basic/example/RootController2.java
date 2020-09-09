@@ -192,10 +192,11 @@ public class RootController2 implements Initializable {
                         Integer.parseInt(tEnglish.getText())
                   // 두번째 생성자??여튼 점수들 매개값이 int라서 점수가져올때 앞에 Integer.parseInt쓴거
                   );
-                  list.set(i, student);
-//                  updateStudent2(student); // 기준에 해당하는 값을 student에 넣고, 여기 넣어줌
+//                  list.set(i, student);
+                  updateStudent2(student); // 기준에 해당하는 값을 student에 넣고, 여기 넣어줌
                }
             }
+            tableView.setItems(getStudent2());
             stage.close();
          }
       });
@@ -321,7 +322,9 @@ public class RootController2 implements Initializable {
                TextField txtMath = (TextField) parent.lookup("#txtMath");
                TextField txtEnglish = (TextField) parent.lookup("#txtEnglish");
                
-               Student2 student = new Student2(txtName.getText(),
+               Student2 student = new Student2(
+//            		 Integer.parseInt(student.getId(),
+            				 txtName.getText(),
                      Integer.parseInt(txtKorean.getText()),
                      Integer.parseInt(txtMath.getText()),
                      Integer.parseInt(txtEnglish.getText())

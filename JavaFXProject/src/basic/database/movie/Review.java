@@ -5,24 +5,34 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class Review {
 	private SimpleIntegerProperty id;
+	private SimpleStringProperty img;
 	private SimpleStringProperty name;
-	private SimpleStringProperty date;
-	private SimpleStringProperty rank;
-	private SimpleStringProperty comment;
+	private SimpleStringProperty day;
+	private SimpleIntegerProperty rank;
+	private SimpleStringProperty reviewcomment;
 	
 // 이중생성자
-	public Review(String name, String date, String rank, String comment) {
+	public Review() {	}
+	public Review(String name, String day, int rank, String reviewcomment) {
 		this.name = new SimpleStringProperty(name);
-		this.date = new SimpleStringProperty(date);
-		this.rank = new SimpleStringProperty(rank);
-		this.comment = new SimpleStringProperty(comment);
+		this.day = new SimpleStringProperty(day);
+		this.rank = new SimpleIntegerProperty(rank);
+		this.reviewcomment = new SimpleStringProperty(reviewcomment);
 	}
-	public Review(int id, String name, String date, String rank, String comment) {
+	public Review(String img, String name, String day, int rank, String reviewcomment) {
+		this.img = new SimpleStringProperty(img);
 		this.name = new SimpleStringProperty(name);
-		this.date = new SimpleStringProperty(date);
-		this.rank = new SimpleStringProperty(rank);
-		this.comment = new SimpleStringProperty(comment);
+		this.day = new SimpleStringProperty(day);
+		this.rank = new SimpleIntegerProperty(rank);
+		this.reviewcomment = new SimpleStringProperty(reviewcomment);
+	}
+	public Review(int id, String img, String name, String day, int rank, String reviewcomment) {
 		this.id = new SimpleIntegerProperty(id);
+		this.img = new SimpleStringProperty(img);
+		this.name = new SimpleStringProperty(name);
+		this.day = new SimpleStringProperty(day);
+		this.rank = new SimpleIntegerProperty(rank);
+		this.reviewcomment = new SimpleStringProperty(reviewcomment);
 	}
 // 겟셋	
 	public int getId() {
@@ -31,6 +41,13 @@ public class Review {
 
 	public void setId(int id) {
 		this.id.set(id);
+	}
+	public String getImg() {
+		return this.img.get();
+	}
+
+	public void setImg(String img) {
+		this.img.set(img);
 	}
 	
 	public String getName() {
@@ -41,28 +58,28 @@ public class Review {
 		this.name.set(name);
 	}
 	
-	public String getDate() {
-		return this.date.get();
+	public String getDay() {
+		return this.day.get();
 	}
 
-	public void setDate(String date) {
-		this.date.set(date);
+	public void setDay(String day) {
+		this.day.set(day);
 	}
 	
-	public String getRank() {
+	public int getRank() {
 		return this.rank.get();
 	}
 
-	public void setRank(String rank) {
+	public void setRank(int rank) {
 		this.rank.set(rank);
 	}
 	
-	public String getComment() {
-		return this.comment.get();
+	public String getReviewcomment() {
+		return this.reviewcomment.get();
 	}
 
-	public void setComment(String comment) {
-		this.comment.set(comment);
+	public void setReviewcomment(String reviewcomment) {
+		this.reviewcomment.set(reviewcomment);
 	}
 
 }

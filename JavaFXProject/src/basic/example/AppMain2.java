@@ -11,7 +11,7 @@ public class AppMain2 extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// fxml의 정적메소드를 가져올수없어서 new 로 만듦??
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("Root3.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Root2.fxml"));
 		BorderPane root = loader.load();
 	
 		RootController2 controller = loader.getController();

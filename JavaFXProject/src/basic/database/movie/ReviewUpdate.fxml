@@ -1,8 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1">
-	<!-- TODO Add Nodes -->
+<BorderPane prefHeight="500.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<padding>
+		<Insets topRightBottomLeft="10" />
+	</padding>
+   <top>
+   		<AnchorPane BorderPane.alignment="CENTER">
+   			<children>
+   		    	<ImageView id="updateView" fitHeight="279.0" fitWidth="458.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="0.0" />
+			    <Button id="updateSelect" layoutX="178.0" layoutY="294.0" text="이미지 불러오기" />
+			</children>
+		</AnchorPane>
+   </top>
+   
+   <bottom>
+		<HBox alignment="CENTER" prefHeight="10" prefWidth="400.0" spacing="20">
+			<BorderPane.margin>
+
+			</BorderPane.margin>
+			<children>
+				<Button id="UpdateSave" text="수정" />
+            <Button id="btnUpdateClose" text="창닫기" />
+			</children>
+		</HBox>
+   </bottom>
+   <left>
+   		<GridPane alignment="CENTER" hgap="10" prefHeight="213.0" prefWidth="460.0" vgap="10" BorderPane.alignment="CENTER">
+      <children>
+   			<Label prefWidth="100" text="날짜" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+   			<Label prefWidth="100" text="영화제목" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+   			<Label prefWidth="100" text="평점" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+   			<Label prefWidth="100" text="한줄평" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+   			<TextField id="newDate" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+   			<TextField id="newName" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField id="newRank" prefHeight="23.0" prefWidth="354.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+   			<TextField id="newComment" prefWidth="350" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+   </children>
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+		</GridPane>
+   </left>
 </BorderPane>
-

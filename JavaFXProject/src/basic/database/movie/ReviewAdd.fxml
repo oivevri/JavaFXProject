@@ -11,7 +11,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 
-
 <BorderPane prefHeight="500.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<padding>
 		<Insets topRightBottomLeft="10" />
@@ -19,7 +18,7 @@
    <top>
    		<AnchorPane BorderPane.alignment="CENTER">
    			<children>
-   		    	<ImageView id="imageView" fitHeight="319.0" fitWidth="458.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="0.0" />
+   		    	<ImageView id="imageView" fitHeight="279.0" fitWidth="458.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="0.0" />
 			    <Button id="btnSelect" layoutX="178.0" layoutY="294.0" text="이미지 불러오기" />
 			</children>
 		</AnchorPane>
@@ -45,7 +44,7 @@
    			<Label prefWidth="100" text="한줄평" GridPane.columnIndex="0" GridPane.rowIndex="3" />
    			<TextField id="txtDate" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="0" />
    			<TextField id="txtName" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-   			<TextField id="txtRank" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField id="txtRank" prefHeight="23.0" prefWidth="354.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
    			<TextField id="txtComment" prefWidth="350" GridPane.columnIndex="1" GridPane.rowIndex="3" />
    </children>
          <columnConstraints>

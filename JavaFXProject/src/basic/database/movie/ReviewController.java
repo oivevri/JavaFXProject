@@ -6,8 +6,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import basic.common.ConnectionDB;
+import basic.database.movie.Review;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -37,24 +43,31 @@ public class ReviewController implements Initializable{
 	@FXML Button btnAdd;
 	
 	ObservableList<Review> list;
-
+	String sql = "";
+	Connection conn = ConnectionDB.getDB();
+	PreparedStatement pstmt;
+	
+	File path;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		// ReviewList.fxml 의 칼럼과 순서맞춰서 가져오기
 		TableColumn<Review, ?> tc = tableView.getColumns().get(0);
-		tc.setCellValueFactory(new PropertyValueFactory<>("date"));
-		tc = tableView.getColumns().get(1);
 		tc.setCellValueFactory(new PropertyValueFactory<>("name"));
+		tc = tableView.getColumns().get(1);
+		tc.setCellValueFactory(new PropertyValueFactory<>("day"));
 		tc = tableView.getColumns().get(2);
 		tc.setCellValueFactory(new PropertyValueFactory<>("rank"));
 		tc = tableView.getColumns().get(3);
-		tc.setCellValueFactory(new PropertyValueFactory<>("comment"));
+		tc.setCellValueFactory(new PropertyValueFactory<>("reviewcomment"));
 		
 // 저장하는 리스트 -> 테이블뷰에 넣어주기
 		list = FXCollections.observableArrayList();
 		tableView.setItems(list);
 		
+// 데이터베이스 조회
+		tableView.setItems(getReview());
 // 추가버튼
 		btnAdd.setOnAction(new EventHandler<ActionEvent>() {
 			
@@ -69,18 +82,18 @@ public class ReviewController implements Initializable{
 			@Override
 			public void handle(MouseEvent event) {
 				if(event.getClickCount() == 2) { 
-					String selectedName = tableView.getSelectionModel().getSelectedItem().getName();
+					int selectedId = tableView.getSelectionModel().getSelectedItem().getId();
 		            // 더블클릭한선택한 요소의 이름을 컬렉션(테이블뷰?)에서 찾아서 한건 가져오기
-		               handleDoubleClikAction(selectedName); // 
+		               handleDoubleClikAction(selectedId); // 
 		           }
 			}
-
+// 더블클릭했을때 selectedItem 으로 받아온 getName이 
 			
 		});
 		
 	}
 // 상세정보 메소드(더블클릭)
-	public void handleDoubleClikAction(String name) {
+	public void handleDoubleClikAction(int selectedId) {
 	   Stage stage = new Stage(StageStyle.UTILITY);
 	   stage.initModality(Modality.WINDOW_MODAL);
 	   stage.initOwner(btnAdd.getScene().getWindow());
@@ -92,22 +105,36 @@ public class ReviewController implements Initializable{
 			stage.setScene(sc);
 			stage.show();
 		// 라벨이.. 맞니	
-			ImageView imageView = (ImageView) parent.lookup("#imageView");
+			ImageView iView = (ImageView) parent.lookup("#iView");
 			Label iName = (Label) parent.lookup("#iName");
 			Label iDate = (Label) parent.lookup("#iDate");
 			Label iRank = (Label) parent.lookup("#iRank");
 			Label iComment = (Label) parent.lookup("#iComment");
 		// 읽어오는거..	
 			for(Review rv : list) {
-				if(rv.getName().equals(name)) {
-					// 이미지 불러올때도 경로 불러와서 변환해서 해야함
-					iDate.setText(rv.getDate());
+				if(rv.getId() == selectedId) {
+				// 이미지 불러올때는 DB에 경로로 저장했는걸 가져와서 이미지로 변환시켜줘야한다 
+					FileInputStream fis = new FileInputStream(rv.getImg());
+					BufferedInputStream bis = new BufferedInputStream(fis);
+					Image readimg = new Image(bis);
+					iView.setImage(readimg);
+					
+					// 이건 나머지 정보 불러오는거
+					iDate.setText(rv.getDay());
 					iName.setText(rv.getName());
-					iRank.setText(rv.getRank());
-					iComment.setText(rv.getComment());
+					iRank.setText(String.valueOf(rv.getRank()));
+					iComment.setText(rv.getReviewcomment());
 				}
 			}
-			
+		// 수정버튼
+			Button btnUpdate = (Button) parent.lookup("#btnUpdate");
+			btnUpdate.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					handlebtnUpdateAction(selectedId);
+				}
+			});
+		// 창닫기 버튼	
 			Button btnInfoClose = (Button) parent.lookup("#btnInfoClose");
 			btnInfoClose.setOnAction(e -> stage.close());
 			
@@ -115,8 +142,76 @@ public class ReviewController implements Initializable{
 			e.printStackTrace();
 		}
 	}
+// 리뷰수정 메소드
+	public void handlebtnUpdateAction(int selectedId) {
+		Stage stage = new Stage(StageStyle.UTILITY);
+		stage.initModality(Modality.WINDOW_MODAL);
+		stage.initOwner(btnAdd.getScene().getWindow());
+		stage.setTitle("리뷰 수정");
+		
+		try {
+			Parent updateParent = FXMLLoader.load(getClass().getResource("ReviewUpdate.fxml"));
+			Scene sc = new Scene(updateParent);
+			stage.setScene(sc);
+			stage.show();
+			
+			ImageView updateView = (ImageView) updateParent.lookup("#updateView");
+			TextField newDate = (TextField) updateParent.lookup("#newDate");
+			TextField newName = (TextField) updateParent.lookup("#newName");
+			TextField newRank = (TextField) updateParent.lookup("#newRank");
+			TextField newComment = (TextField) updateParent.lookup("#newComment");
 	
-// 리뷰추가
+	// 이미지 불러오기 버튼 
+			Button updateSelect = (Button) updateParent.lookup("#updateSelect");
+			updateSelect.setOnAction( img -> imgSel(updateView));
+			
+	// 수정 버튼 누르면 저장되기		
+			Button UpdateSave = (Button) updateParent.lookup("#UpdateSave");
+			UpdateSave.setOnAction(new EventHandler<ActionEvent>() {
+			// 순서대로 값 들어가게 하기
+				@Override
+				public void handle(ActionEvent event) {
+					for (int i = 0; i < list.size(); i++) {
+						if (list.get(i).getId() == selectedId) {
+
+							Review review = new Review(path.toString(), newName.getText(), newDate.getText(),
+									Integer.parseInt(newRank.getText()), newComment.getText()
+							);
+							updateReview(selectedId);
+						}
+					}
+					tableView.setItems(getReview());
+					stage.close();
+				}
+			});
+	// 수정 전 기존정보 불러오기
+		    for(Review rev : list) {
+		        if(rev.getId() == selectedId) { //학생 클래스에있는 이름이랑 여기서의 매개값 이름이랑 같다면
+		    // 이미지 불러오기 : DB에 경로로 저장했는걸 가져와서 이미지로 변환시켜줘야한다 
+		        	FileInputStream fis = new FileInputStream(rev.getImg());
+					BufferedInputStream bis = new BufferedInputStream(fis);
+					Image readimg = new Image(bis);
+					updateView.setImage(readimg);
+					
+		        	newName.setText(rev.getName());
+		        	newDate.setText(rev.getDay());
+		        	newRank.setText(String.valueOf(rev.getRank()));
+					newComment.setText(rev.getReviewcomment());
+				}
+		    }
+
+// 창닫기 버튼
+			Button btnUpdateClose = (Button) updateParent.lookup("#btnUpdateClose");
+			btnUpdateClose.setOnAction(e -> {
+				stage.close();
+
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+// 리뷰추가 메소드
 	public void handleBtnAddAction() {
 		Stage stage = new Stage(StageStyle.UTILITY);
 		stage.initModality(Modality.WINDOW_MODAL);
@@ -129,35 +224,35 @@ public class ReviewController implements Initializable{
 			stage.setScene(sc);
 			stage.show();
 			
+	// 이미지 불러오기 버튼 -> 뭔가 오류가나는데 왜인지모르겠어
+			Button btnSelect = (Button) parent.lookup("#btnSelect");
+			ImageView imageView = (ImageView) parent.lookup("#imageView");
+			btnSelect.setOnAction( img -> imgSel(imageView));
+			
 	// 저장버튼
 			Button btnFormAdd = (Button) parent.lookup("#btnFormAdd");
 			btnFormAdd.setOnAction(new EventHandler<ActionEvent>() {
 
 				@Override
 				public void handle(ActionEvent arg0) {
-					TextField txtDate = (TextField) parent.lookup("#txtDate");
 					TextField txtName = (TextField) parent.lookup("#txtName");
+					TextField txtDate = (TextField) parent.lookup("#txtDate");
 					TextField txtRank = (TextField) parent.lookup("#txtRank");
 					TextField txtComment = (TextField) parent.lookup("#txtComment");
 					
-					Review review = new Review(txtDate.getText(), txtName.getText(),
-							txtRank.getText(), txtComment.getText()
-					); 
-					list.add(review);
-					
+					Review review = new Review(
+							path.toString(), txtName.getText(), txtDate.getText(),
+							Integer.parseInt(txtRank.getText()), txtComment.getText()
+					);
+// 이미지 불러온거는 밑에서 path에 담은거고, 나머지 정보는 textField에 입력한값임. 그걸 지금 새로운 review에 담겠다는것
+					insertReview(review); // 추가 저장
+					tableView.setItems(getReview()); // 새로고침
 					stage.close();
 				}
 			});
 	// 취소버튼	
 			Button btnFormClose = (Button) parent.lookup("#btnFormClose");
 			btnFormClose.setOnAction(e -> stage.close());
-			
-	// 이미지 불러오기 버튼 -> 뭔가 오류가나는데 왜인지모르겠어
-			Button btnSelect = (Button) parent.lookup("#btnSelect");
-			ImageView imageView = (ImageView) parent.lookup("#imageView");
-			btnSelect.setOnAction( img -> imgSel(imageView));
-			
-			
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -174,7 +269,7 @@ public class ReviewController implements Initializable{
 		fc.getExtensionFilters().add(imgType); //다른 확장자는 허용하지 않음 
 	
 	//선택 파일명 변환
-		File path =fc.showOpenDialog(null);//어디에 창을 띄울지
+		path = fc.showOpenDialog(null);//어디에 창을 띄울지
 		//1. 파일 경로 지정
 		System.out.println(path); // 선택한 경로가 출력됨
 		
@@ -184,18 +279,71 @@ public class ReviewController implements Initializable{
 			BufferedInputStream bis = new BufferedInputStream(fis);
 
 		//3. 읽어오기
-			Image img = new Image(bis);
-			imageView.setImage(img);
-//
-//		//4. 자원반납
-//			try {
-//				bis.close();
-//				fis.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}			
+			Image readimg = new Image(bis);
+			imageView.setImage(readimg);
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}	
+	}
+// 데이터베이스 조회하는 메소드
+	public ObservableList<Review> getReview() {
+		sql = "select * from review order by 1";
+		list = FXCollections.observableArrayList();
+		
+	    try { 
+	        pstmt = conn.prepareStatement(sql);
+	        ResultSet rs = pstmt.executeQuery();
+	        while(rs.next()) {
+	           Review review = new Review(rs.getInt("id"),
+	        		 rs.getString("img"),
+	                 rs.getString("name"),
+	                 rs.getString("day"),
+	                 rs.getInt("rank"),
+	                 rs.getString("reviewcomment")
+	           );
+	           list.add(review);
+	        }
+	             
+	    } catch (SQLException e){
+	       e.printStackTrace();
+	    }
+		return list;
+	}
+// 데이터베이스 추가하는 메소드	
+	public void insertReview(Review review) {
+		sql = "insert into review values(review_seq.NEXTVAL, ?, ?, ?, ?, ?)" ;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, review.getImg());
+			pstmt.setString(2, review.getName());
+			pstmt.setString(3, review.getDay());
+			pstmt.setInt(4, review.getRank());
+			pstmt.setString(5, review.getReviewcomment());
+			pstmt.executeUpdate(); // 테이블이 변하게 되면 executeUpdate()사용
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
+// 데이터베이스 수정 메소드
+	public void updateReview(int selectedId) {
+		String sql = "update review set img = ?, name = ?, day = ?, rank = ?, reviewcomment = ? where id = ?";
+		Review review = new Review();
+		System.out.println(review.getId());
+		try {
+	         pstmt = conn.prepareStatement(sql);
+	         
+	         pstmt.setString(1, review.getImg());
+	         pstmt.setString(2, review.getName());
+	         pstmt.setString(3, review.getDay());
+	         pstmt.setInt(4, review.getRank());
+	         pstmt.setString(5, review.getReviewcomment());
+	         pstmt.setInt(6, review.getId());
+	         pstmt.executeUpdate(); //테이블이 변하게 되면 executeUpdate()사용
+
+	      } catch (SQLException e) {
+	         e.printStackTrace();
+	      }
+		
 	}
 }
