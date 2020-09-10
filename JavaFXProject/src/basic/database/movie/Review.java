@@ -12,7 +12,14 @@ public class Review {
 	private SimpleStringProperty reviewcomment;
 	
 // 이중생성자
-	public Review() {	}
+	public Review() {
+		id = new SimpleIntegerProperty();
+		img = new SimpleStringProperty();
+		name = new SimpleStringProperty();
+		day = new SimpleStringProperty();
+		rank  = new SimpleIntegerProperty();
+		reviewcomment = new SimpleStringProperty();
+	}
 	public Review(String name, String day, int rank, String reviewcomment) {
 		this.name = new SimpleStringProperty(name);
 		this.day = new SimpleStringProperty(day);
@@ -20,6 +27,7 @@ public class Review {
 		this.reviewcomment = new SimpleStringProperty(reviewcomment);
 	}
 	public Review(String img, String name, String day, int rank, String reviewcomment) {
+		id = new SimpleIntegerProperty();
 		this.img = new SimpleStringProperty(img);
 		this.name = new SimpleStringProperty(name);
 		this.day = new SimpleStringProperty(day);

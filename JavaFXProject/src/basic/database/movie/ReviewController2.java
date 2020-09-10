@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import basic.common.ConnectionDB;
+import basic.database.movie.Review;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -37,7 +38,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class ReviewController implements Initializable{
+public class ReviewController2 implements Initializable{
 	@FXML TableView<Review> tableView; // 얘 메인이고 그 fxml에서 fx:control으로 연결해준거
 	@FXML Button btnAdd, btnDelete;
 	
@@ -47,7 +48,6 @@ public class ReviewController implements Initializable{
 	PreparedStatement pstmt;
 	
 	File path;
-	String ex;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -85,9 +85,8 @@ public class ReviewController implements Initializable{
 				deleteReview(selectedId);
 				tableView.setItems(getReview());
 			}
-			
+					
 		});
-		
 // 더블클릭으로 상세보기
 		tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -99,7 +98,8 @@ public class ReviewController implements Initializable{
 		               handleDoubleClikAction(selectedId); // 
 		           }
 			}
-	
+// 더블클릭했을때 selectedItem 으로 받아온 getName이 
+			
 		});
 		
 	}
@@ -129,7 +129,7 @@ public class ReviewController implements Initializable{
 					BufferedInputStream bis = new BufferedInputStream(fis);
 					Image readimg = new Image(bis);
 					iView.setImage(readimg);
-					ex = iView.getImage().toString();
+					
 					// 이건 나머지 정보 불러오는거
 					iDate.setText(rv.getDay());
 					iName.setText(rv.getName());
@@ -185,30 +185,21 @@ public class ReviewController implements Initializable{
 					for (int i = 0; i < list.size(); i++) {
 						if (list.get(i).getId() == selectedId) {
 							Review review = new Review();
-							
-							System.out.println(path);
-							if (path != null) {
-								System.out.println(path.toString());
-								review = new Review(
-										
-										path.toString(), newName.getText(), newDate.getText(),
-										Integer.parseInt(newRank.getText()), newComment.getText());
-								review.setId(selectedId); // 바꿔주는 기준
-							} else {
-									review = new Review(
-											ex, newName.getText(), newDate.getText(),
-											Integer.parseInt(newRank.getText()), newComment.getText()
-											);
-							}
-							updateReview(review);
+							review.setId(selectedId);
+							System.out.println(path.toString());
+							review = new Review(path.toString(), newName.getText(), newDate.getText(),
+									Integer.parseInt(newRank.getText()), newComment.getText()
+							);
+							updateReview(selectedId);
 						}
 					}
 					tableView.setItems(getReview());
+					stage.close();
 				}
 			});
 	// 수정 전 기존정보 불러오기
 		    for(Review rev : list) {
-		        if(rev.getId() == selectedId) {
+		        if(rev.getId() == selectedId) { //학생 클래스에있는 이름이랑 여기서의 매개값 이름이랑 같다면
 		    // 이미지 불러오기 : DB에 경로로 저장했는걸 가져와서 이미지로 변환시켜줘야한다 
 		        	FileInputStream fis = new FileInputStream(rev.getImg());
 					BufferedInputStream bis = new BufferedInputStream(fis);
@@ -246,7 +237,7 @@ public class ReviewController implements Initializable{
 			stage.setScene(sc);
 			stage.show();
 			
-	// 이미지 불러오기 버튼
+	// 이미지 불러오기 버튼 -> 뭔가 오류가나는데 왜인지모르겠어
 			Button btnSelect = (Button) parent.lookup("#btnSelect");
 			ImageView imageView = (ImageView) parent.lookup("#imageView");
 			btnSelect.setOnAction( img -> imgSel(imageView));
@@ -296,15 +287,14 @@ public class ReviewController implements Initializable{
 		System.out.println(path); // 선택한 경로가 출력됨
 		
 		try {
-//			if(path != null) {
-				//2. 스트림 지정
-				FileInputStream fis = new FileInputStream(path);
-				BufferedInputStream bis = new BufferedInputStream(fis);
+		//2. 스트림 지정
+			FileInputStream fis = new FileInputStream(path);
+			BufferedInputStream bis = new BufferedInputStream(fis);
 
-				//3. 읽어오기
-				Image readimg = new Image(bis);
-				imageView.setImage(readimg);
-//			}
+		//3. 읽어오기
+			Image readimg = new Image(bis);
+			imageView.setImage(readimg);
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}	
@@ -349,47 +339,33 @@ public class ReviewController implements Initializable{
 		}
 	}
 // 데이터베이스 수정 메소드
-	public void updateReview(Review review) {
-		System.out.println(review.getImg() + "업데이트되었습니다");
+	public void updateReview(int selectedId) {
 		String sql = "update review set img = ?, name = ?, day = ?, rank = ?, reviewcomment = ? where id = ?";
+		Review review = new Review();
+		System.out.println(review.getId());
 		try {
-			
-//			위에 저장버튼 누르는걸로 했으니까 다시 할 필요 없음
-//			Parent updateParent = FXMLLoader.load(getClass().getResource("ReviewUpdate.fxml"));
-//			ImageView updateView = (ImageView) updateParent.lookup("#updateView");
-//			TextField newDate = (TextField) updateParent.lookup("#newDate");
-//			TextField newName = (TextField) updateParent.lookup("#newName");
-//			TextField newRank = (TextField) updateParent.lookup("#newRank");
-//			TextField newComment = (TextField) updateParent.lookup("#newComment");
-//			Review review = new Review(selectedId, path.toString(), newName.getText(),
-//					newDate.getText(), Integer.parseInt(newRank.getText()), newComment.getText());
-
-				try {
-					pstmt = conn.prepareStatement(sql);
+	        pstmt = conn.prepareStatement(sql);
 	         
-					pstmt.setString(1, review.getImg());
-					pstmt.setString(2, review.getName());
-					pstmt.setString(3, review.getDay());
-					pstmt.setInt(4, review.getRank());
-					pstmt.setString(5, review.getReviewcomment());
-					pstmt.setInt(6, review.getId());
-					pstmt.executeUpdate(); //테이블이 변하게 되면 executeUpdate()사용
-
-				} catch (SQLException s) {
-					s.printStackTrace();
-				}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	        pstmt.setString(1, review.getImg());
+	        pstmt.setString(2, review.getName());
+	        pstmt.setString(3, review.getDay());
+	        pstmt.setInt(4, review.getRank());
+	        pstmt.setString(5, review.getReviewcomment());
+	        pstmt.setInt(6, review.getId());
+	        pstmt.executeUpdate(); //테이블이 변하게 되면 executeUpdate()사용
+	 		System.out.println(review.getImg() + "업데이트되었습니다");
+	      } catch (SQLException e) {
+	         e.printStackTrace();
+	      }
 	}
 // 데이터베이스 삭제 메소드
 	public void deleteReview(int selId) {
-	    String sql =  "delete from review where id = " + selId;
-	       try {
-	          pstmt = conn.prepareStatement(sql);
-	          pstmt.executeUpdate();
-	       } catch (SQLException e) {
-	          e.printStackTrace();
-	       }
+		String sql =  "delete from review where id = " + selId;
+		    try {
+		       pstmt = conn.prepareStatement(sql);
+		       pstmt.executeUpdate();
+		    } catch (SQLException e) {
+		       e.printStackTrace();
+		    }
 	}
 }

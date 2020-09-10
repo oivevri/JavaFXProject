@@ -23,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -37,7 +38,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class ReviewController implements Initializable{
+public class ReviewController3 implements Initializable{
 	@FXML TableView<Review> tableView; // 얘 메인이고 그 fxml에서 fx:control으로 연결해준거
 	@FXML Button btnAdd, btnDelete;
 	
@@ -129,7 +130,7 @@ public class ReviewController implements Initializable{
 					BufferedInputStream bis = new BufferedInputStream(fis);
 					Image readimg = new Image(bis);
 					iView.setImage(readimg);
-					ex = iView.getImage().toString();
+					ex = rv.getImg().toString();
 					// 이건 나머지 정보 불러오는거
 					iDate.setText(rv.getDay());
 					iName.setText(rv.getName());
@@ -167,7 +168,7 @@ public class ReviewController implements Initializable{
 			stage.show();
 			
 			ImageView updateView = (ImageView) updateParent.lookup("#updateView");
-			TextField newDate = (TextField) updateParent.lookup("#newDate");
+			DatePicker newDate = (DatePicker) updateParent.lookup("#newDate");
 			TextField newName = (TextField) updateParent.lookup("#newName");
 			TextField newRank = (TextField) updateParent.lookup("#newRank");
 			TextField newComment = (TextField) updateParent.lookup("#newComment");
@@ -185,18 +186,16 @@ public class ReviewController implements Initializable{
 					for (int i = 0; i < list.size(); i++) {
 						if (list.get(i).getId() == selectedId) {
 							Review review = new Review();
-							
-							System.out.println(path);
+
+							System.out.println(ex);
 							if (path != null) {
-								System.out.println(path.toString());
 								review = new Review(
-										
-										path.toString(), newName.getText(), newDate.getText(),
+										path.toString(), newName.getText(), newDate.getValue().toString(),
 										Integer.parseInt(newRank.getText()), newComment.getText());
-								review.setId(selectedId); // 바꿔주는 기준
+								review.setId(selectedId);
 							} else {
 									review = new Review(
-											ex, newName.getText(), newDate.getText(),
+											ex, newName.getText(), newDate.getValue().toString(),
 											Integer.parseInt(newRank.getText()), newComment.getText()
 											);
 							}
@@ -204,6 +203,7 @@ public class ReviewController implements Initializable{
 						}
 					}
 					tableView.setItems(getReview());
+//					stage.close();
 				}
 			});
 	// 수정 전 기존정보 불러오기
@@ -216,7 +216,9 @@ public class ReviewController implements Initializable{
 					updateView.setImage(readimg);
 					
 		        	newName.setText(rev.getName());
-		        	newDate.setText(rev.getDay());
+		        	newDate.setValue(rev.getDay());
+		        	// 이부분 어떻게해야하는지 ??
+		        	// 난 그냥 ㅇㅇㅇㅇ-ㅇㅇ-ㅇㅇ 형태라서 로컬데이트 형태가 아닌데.. 셋밸류 어케해야하노 
 		        	newRank.setText(String.valueOf(rev.getRank()));
 					newComment.setText(rev.getReviewcomment());
 				}
@@ -258,12 +260,12 @@ public class ReviewController implements Initializable{
 				@Override
 				public void handle(ActionEvent arg0) {
 					TextField txtName = (TextField) parent.lookup("#txtName");
-					TextField txtDate = (TextField) parent.lookup("#txtDate");
+					DatePicker txtDate = (DatePicker) parent.lookup("#txtDate");
 					TextField txtRank = (TextField) parent.lookup("#txtRank");
 					TextField txtComment = (TextField) parent.lookup("#txtComment");
 					
 					Review review = new Review(
-							path.toString(), txtName.getText(), txtDate.getText(),
+							path.toString(), txtName.getText(), txtDate.getValue().toString(),
 							Integer.parseInt(txtRank.getText()), txtComment.getText()
 					);
 // 이미지 불러온거는 밑에서 path에 담은거고, 나머지 정보는 textField에 입력한값임. 그걸 지금 새로운 review에 담겠다는것
@@ -350,7 +352,6 @@ public class ReviewController implements Initializable{
 	}
 // 데이터베이스 수정 메소드
 	public void updateReview(Review review) {
-		System.out.println(review.getImg() + "업데이트되었습니다");
 		String sql = "update review set img = ?, name = ?, day = ?, rank = ?, reviewcomment = ? where id = ?";
 		try {
 			

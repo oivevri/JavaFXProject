@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="basic.database.movie.ReviewController">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="basic.database.movie.ReviewController3">
 	<center>
 		<TableView fx:id="tableView" prefHeight="200" prefWidth="600">
 			<columns>

@@ -42,7 +42,7 @@
    			<Label prefWidth="100" text="영화제목" GridPane.columnIndex="0" GridPane.rowIndex="1" />
    			<Label prefWidth="100" text="평점" GridPane.columnIndex="0" GridPane.rowIndex="2" />
    			<Label prefWidth="100" text="한줄평" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-   			<TextField id="newDate" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+			<DatePicker id = "newDate" promptText="날짜를 선택하세요" prefHeight="23.0" prefWidth="158.0" GridPane.columnIndex="1" />
    			<TextField id="newName" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField id="newRank" prefHeight="23.0" prefWidth="354.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
    			<TextField id="newComment" prefWidth="350" GridPane.columnIndex="1" GridPane.rowIndex="3" />
