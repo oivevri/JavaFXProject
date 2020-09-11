@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import basic.common.ConnectionDB;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,9 +22,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -32,14 +36,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class ReviewController3 implements Initializable{
 	@FXML TableView<Review> tableView; // 얘 메인이고 그 fxml에서 fx:control으로 연결해준거
+	@FXML ImageView preview;
 	@FXML Button btnAdd, btnDelete;
 	
 	ObservableList<Review> list;
@@ -50,8 +58,12 @@ public class ReviewController3 implements Initializable{
 	File path;
 	String ex;
 	
+	ObservableList<Integer> ranknum; // 콤보박스용
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		// 콤보박스용
+		ranknum = FXCollections.observableArrayList(1, 2, 3, 4, 5);
 		
 		// ReviewList.fxml 의 칼럼과 순서맞춰서 가져오기
 		TableColumn<Review, ?> tc = tableView.getColumns().get(0);
@@ -66,7 +78,23 @@ public class ReviewController3 implements Initializable{
 // 저장하는 리스트 -> 테이블뷰에 넣어주기
 		list = FXCollections.observableArrayList();
 		tableView.setItems(list);
-		
+	// 선택한 영화 포스터 미리보기...
+		tableView.getSelectionModel().selectedItemProperty()
+			.addListener(new ChangeListener<Review>() {
+				@Override
+				public void changed(ObservableValue<? extends Review> arg0, Review oldimg, Review newimg) {
+					if(newimg != null) {
+						try {
+							FileInputStream fis = new FileInputStream(newimg.getImg());
+							BufferedInputStream bis = new BufferedInputStream(fis);
+							Image readimg = new Image(bis);
+							preview.setImage(readimg);
+						}catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+		});
 // 데이터베이스 조회
 		tableView.setItems(getReview());
 // 추가버튼
@@ -117,6 +145,7 @@ public class ReviewController3 implements Initializable{
 			stage.setScene(sc);
 			stage.show();
 		// 라벨이.. 맞니	
+			GridPane gp = (GridPane) parent.lookup("#gp");
 			ImageView iView = (ImageView) parent.lookup("#iView");
 			Label iName = (Label) parent.lookup("#iName");
 			Label iDate = (Label) parent.lookup("#iDate");
@@ -144,12 +173,13 @@ public class ReviewController3 implements Initializable{
 				@Override
 				public void handle(ActionEvent event) {
 					handlebtnUpdateAction(selectedId);
+					
 				}
+				
 			});
 		// 창닫기 버튼	
 			Button btnInfoClose = (Button) parent.lookup("#btnInfoClose");
 			btnInfoClose.setOnAction(e -> stage.close());
-			
 	   } catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -168,11 +198,12 @@ public class ReviewController3 implements Initializable{
 			stage.show();
 			
 			ImageView updateView = (ImageView) updateParent.lookup("#updateView");
-			DatePicker newDate = (DatePicker) updateParent.lookup("#newDate");
+			TextField newDate = (TextField) updateParent.lookup("#newDate");
 			TextField newName = (TextField) updateParent.lookup("#newName");
-			TextField newRank = (TextField) updateParent.lookup("#newRank");
+			ComboBox<Integer> newRank = (ComboBox<Integer>) updateParent.lookup("#newRank");
 			TextField newComment = (TextField) updateParent.lookup("#newComment");
-	
+			newRank.setItems(ranknum);
+			newRank.getSelectionModel().selectLast();
 	// 이미지 불러오기 버튼 
 			Button updateSelect = (Button) updateParent.lookup("#updateSelect");
 			updateSelect.setOnAction( img -> imgSel(updateView));
@@ -190,20 +221,23 @@ public class ReviewController3 implements Initializable{
 							System.out.println(ex);
 							if (path != null) {
 								review = new Review(
-										path.toString(), newName.getText(), newDate.getValue().toString(),
-										Integer.parseInt(newRank.getText()), newComment.getText());
+										path.toString(), newName.getText(), newDate.getText(),
+										Integer.parseInt(newRank.getValue().toString()), newComment.getText());
 								review.setId(selectedId);
 							} else {
 									review = new Review(
-											ex, newName.getText(), newDate.getValue().toString(),
-											Integer.parseInt(newRank.getText()), newComment.getText()
+											ex, newName.getText(), newDate.getText(),
+											Integer.parseInt(newRank.getValue().toString()), newComment.getText()
 											);
+									review.setId(selectedId);
 							}
 							updateReview(review);
+							
 						}
 					}
+					
 					tableView.setItems(getReview());
-//					stage.close();
+					stage.close();
 				}
 			});
 	// 수정 전 기존정보 불러오기
@@ -216,10 +250,8 @@ public class ReviewController3 implements Initializable{
 					updateView.setImage(readimg);
 					
 		        	newName.setText(rev.getName());
-		        	newDate.setValue(rev.getDay());
-		        	// 이부분 어떻게해야하는지 ??
-		        	// 난 그냥 ㅇㅇㅇㅇ-ㅇㅇ-ㅇㅇ 형태라서 로컬데이트 형태가 아닌데.. 셋밸류 어케해야하노 
-		        	newRank.setText(String.valueOf(rev.getRank()));
+		        	newDate.setText(rev.getDay());
+		        	newRank.setValue(rev.getRank());
 					newComment.setText(rev.getReviewcomment());
 				}
 		    }
@@ -247,32 +279,49 @@ public class ReviewController3 implements Initializable{
 			Scene sc = new Scene(parent);
 			stage.setScene(sc);
 			stage.show();
+			TextField txtName = (TextField) parent.lookup("#txtName");
+			DatePicker txtDate = (DatePicker) parent.lookup("#txtDate");
+			ComboBox<Integer> txtRank = (ComboBox<Integer>) parent.lookup("#txtRank");
+			TextField txtComment = (TextField) parent.lookup("#txtComment");
+			txtRank.setItems(ranknum);
+			txtRank.getSelectionModel().selectLast();
 			
 	// 이미지 불러오기 버튼
 			Button btnSelect = (Button) parent.lookup("#btnSelect");
 			ImageView imageView = (ImageView) parent.lookup("#imageView");
 			btnSelect.setOnAction( img -> imgSel(imageView));
 			
-	// 저장버튼
+	// 등록버튼
 			Button btnFormAdd = (Button) parent.lookup("#btnFormAdd");
 			btnFormAdd.setOnAction(new EventHandler<ActionEvent>() {
 
 				@Override
 				public void handle(ActionEvent arg0) {
-					TextField txtName = (TextField) parent.lookup("#txtName");
-					DatePicker txtDate = (DatePicker) parent.lookup("#txtDate");
-					TextField txtRank = (TextField) parent.lookup("#txtRank");
-					TextField txtComment = (TextField) parent.lookup("#txtComment");
-					
-					Review review = new Review(
+					if(txtName.getText() == null || txtName.getText().equals("")) {
+						showPopup("영화제목을 입력하세요");
+					} else if (path.toString() == null || path.toString().equals("")) {
+						showPopup("사진을 선택하세요");
+					} else if (txtDate.getValue() == null || txtDate.getValue().equals("")) {
+						showPopup("감상일을 입력하세요");
+					} else if (txtRank.getValue() == null || txtRank.getValue().equals("")) {
+						showPopup("평점을 매기세요");
+					} else if (txtComment.getText() == null || txtComment.getText().equals("")) {
+						showPopup("한줄평을 입력하세요");
+					} else { //입력코드
+							Review review = new Review(
 							path.toString(), txtName.getText(), txtDate.getValue().toString(),
-							Integer.parseInt(txtRank.getText()), txtComment.getText()
-					);
+							Integer.parseInt(txtRank.getValue().toString()), txtComment.getText()
+									);
+					
 // 이미지 불러온거는 밑에서 path에 담은거고, 나머지 정보는 textField에 입력한값임. 그걸 지금 새로운 review에 담겠다는것
 					insertReview(review); // 추가 저장
 					tableView.setItems(getReview()); // 새로고침
 					stage.close();
+					}
 				}
+	// 등록버튼 누를때 빈칸있으면 팝업
+				
+				
 			});
 	// 취소버튼	
 			Button btnFormClose = (Button) parent.lookup("#btnFormClose");
@@ -392,5 +441,22 @@ public class ReviewController3 implements Initializable{
 	       } catch (SQLException e) {
 	          e.printStackTrace();
 	       }
+	}
+// 팝업 메소드
+	public void showPopup(String warning) {
+		HBox hbox = new HBox();
+			hbox.setStyle("-fx-background-color: yellow; -fx-background-radius: 10;");
+				hbox.setAlignment(Pos.CENTER);
+					
+				Label label = new Label();
+				label.setText(warning);
+				label.setStyle("-fx-text-fill: black; ");
+								
+				hbox.getChildren().add(label);
+						
+				Popup pop = new Popup();
+				pop.getContent().add(hbox);
+				pop.setAutoHide(true);
+				pop.show(btnAdd.getScene().getWindow());
 	}
 }
