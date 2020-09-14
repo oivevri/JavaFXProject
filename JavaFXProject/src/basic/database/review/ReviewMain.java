@@ -1,4 +1,4 @@
-package basic.database.movie;
+package basic.database.review;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

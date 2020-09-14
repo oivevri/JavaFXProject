@@ -24,7 +24,7 @@
 	</top>
 
 	<bottom>
-		<HBox id="hbox" alignment="CENTER" prefHeight="10" prefWidth="400.0" spacing="20">
+		<HBox id="hbox" alignment="CENTER" prefHeight="10" prefWidth="400.0" spacing="20" stylesheets="@../../../../bin/basic/database/review/style.css">
 			<BorderPane.margin>
 			</BorderPane.margin>
 			<children>

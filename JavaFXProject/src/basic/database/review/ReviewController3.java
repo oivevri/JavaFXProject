@@ -1,4 +1,4 @@
-package basic.database.movie;
+package basic.database.review;
 
 import java.io.BufferedInputStream;
 import java.io.File;

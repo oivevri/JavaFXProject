@@ -25,7 +25,7 @@
    </top>
    
    <bottom>
-		<HBox alignment="CENTER" prefHeight="10" prefWidth="400.0" spacing="20">
+		<HBox alignment="CENTER" prefHeight="10" prefWidth="400.0" spacing="20" stylesheets="@../../../../bin/basic/database/review/style.css">
 			<BorderPane.margin>
 
 			</BorderPane.margin>
@@ -44,8 +44,7 @@
    			<Label prefWidth="100" text="한줄평" GridPane.columnIndex="0" GridPane.rowIndex="3" />
 			<TextField id="newDate" prefHeight="23.0" prefWidth="196" GridPane.columnIndex="1" />
    			<TextField id="newName" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ComboBox id="newRank" prefHeight="23.0" prefWidth="78.0"
-					GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox id="newRank" prefHeight="23.0" prefWidth="78.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
    			<TextField id="newComment" prefWidth="350" GridPane.columnIndex="1" GridPane.rowIndex="3" />
    </children>
          <columnConstraints>
