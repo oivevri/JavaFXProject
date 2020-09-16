@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -10,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
 
-<BorderPane prefHeight="540.0" prefWidth="505.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basic.database.review.ReviewController3">
+<BorderPane prefHeight="540.0" prefWidth="505.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basic.database.review.ReviewController4">
 	<center>
 		<TableView fx:id="tableView" prefHeight="159.0" prefWidth="505.0">
 			<columns>
@@ -22,9 +23,14 @@
 		</TableView>
 	</center>
 	<bottom>
-		<HBox alignment="CENTER" prefHeight="30.0" prefWidth="505.0" spacing="50.0" stylesheets="@../../../../bin/basic/database/review/style.css" BorderPane.alignment="CENTER">
+		<HBox alignment="CENTER" prefHeight="30.0" prefWidth="505.0" spacing="20.0" stylesheets="@../../../../bin/basic/database/review/style.css" BorderPane.alignment="CENTER">
 			<children>
-				<Button fx:id="btnAdd" text="추가" />
+            <TextField fx:id="textSearch" prefHeight="23.0" prefWidth="126.0" promptText="검색어를 입력하세요" />
+            <Button fx:id="btnSearch" mnemonicParsing="false" text="검색" />
+				<Button fx:id="btnAdd" text="추가">
+               <HBox.margin>
+                  <Insets left="100.0" />
+               </HBox.margin></Button>
           		<Button fx:id="btnDelete" text="삭제" />
 			</children>
 		</HBox>
